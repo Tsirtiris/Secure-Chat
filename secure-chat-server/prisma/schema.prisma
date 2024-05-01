@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  displayName String
+  username    String    @unique
+  password    String
+  avatar      String
+  pubKey      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  contacted   Contact[] @relation("contacted")
+  contacts    Contact[] @relation("contact")
+  Sent        Message[] @relation("sent")
+  Received    Message[] @relation("received")
+}
+
+model Contact {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String   @db.ObjectId
+  user       User     @relation("contacted", fields: [user_id], references: [id])
+  contact_id String   @db.ObjectId
+  contact    User     @relation("contact", fields: [contact_id], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Message {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  sender_id   String   @db.ObjectId
+  sender      User     @relation("sent", fields: [sender_id], references: [id])
+  receiver_id String   @db.ObjectId
+  receiver    User     @relation("received", fields: [receiver_id], references: [id])
+  content     String
+  key         String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Scope {
+  GROUP
+  PERSONAL
+}
+
+enum Type {
+  PLAIN
+  FILE
+}
