@@ -21,7 +21,7 @@ export const AvatarInput = ({
 				size={"lg"}
 				name={placeholder}
 				borderColor={"gray.900"}
-				src={"https://api.dicebear.com/8.x/fun-emoji/svg?seed=" + value}
+				src={value}
 			></Avatar>
 			<IconButton
 				border={"2px solid"}

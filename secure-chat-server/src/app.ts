@@ -10,6 +10,7 @@ import morgan from "morgan";
 import ContactRoute from "./routes/contact.route";
 import MessageRoute from "./routes/message.route";
 import KeyRoute from "./routes/keys.route";
+import GroupRoute from "./routes/group.route";
 
 require("dotenv").config();
 const app = express();
@@ -31,6 +32,7 @@ app.use(AuthRoute);
 app.use(KeyRoute);
 app.use("/contact", ContactRoute);
 app.use("/message", MessageRoute);
+app.use("/group", GroupRoute);
 
 app.use(middlewares.notFound);
 app.use(errorHandler);

@@ -12,6 +12,10 @@ export const useDecryptedMessage = (id: string, message: string) => {
 			return decryptedMessage;
 		},
 		retry: false,
+		refetchOnMount: false,
+		refetchIntervalInBackground: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
 	});
 	return query;
 };

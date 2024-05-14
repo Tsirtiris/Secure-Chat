@@ -18,7 +18,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../states/query/auth/useLoginMutation";
 import { AxiosError } from "axios";
 import { ErrorResponse } from "../types/ErrorResponse";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { socket } from "../utils/socket";
 
 const LoginPage = () => {
 	const [error, setError] = useState<string | undefined>(undefined);
@@ -65,6 +66,9 @@ const LoginPage = () => {
 			});
 		},
 	});
+	useEffect(() => {
+		socket.disconnect();
+	}, []);
 
 	return (
 		<Flex

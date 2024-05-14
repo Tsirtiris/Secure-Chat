@@ -5,3 +5,7 @@ export const generateRandomAvatar = () => {
 export const getAvatarUrl = (seed: string) => {
 	return "https://api.dicebear.com/8.x/fun-emoji/svg?seed=" + seed;
 };
+
+export const getGroupAvatarUrl = (seed: string) => {
+	return "https://api.dicebear.com/8.x/identicon/svg?seed=" + seed;
+};

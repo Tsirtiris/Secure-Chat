@@ -15,7 +15,7 @@ import { FormInput } from "../components/Form/FormInput";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-import { generateRandomAvatar } from "../utils/avatar";
+import { generateRandomAvatar, getAvatarUrl } from "../utils/avatar";
 import { AvatarInput } from "../components/Form/AvatarInput";
 import { useState } from "react";
 import { useRegisterMutation } from "../states/query/auth/useRegisterMutation";
@@ -124,7 +124,9 @@ const RegisterPage = () => {
 							<Flex gap={"6"} direction={"column"}>
 								<Flex alignItems={"center"} gap={"3"}>
 									<AvatarInput
-										value={formik.values.avatar}
+										value={getAvatarUrl(
+											formik.values.avatar
+										)}
 										placeholder={formik.values.displayName}
 										onChange={(value) =>
 											formik.setFieldValue(

@@ -76,11 +76,19 @@ const getUser = async (userId: string) => {
 	return await prisma.user.findUnique({ where: { id: userId } });
 };
 
+const setOnlineStatus = async (userId: string, status: boolean) => {
+	return await prisma.user.update({
+		where: { id: userId },
+		data: { isOnline: status },
+	});
+};
+
 const UserController = {
 	register,
 	login,
 	getUser,
 	currentUser,
 	updatePublicKey,
+	setOnlineStatus,
 };
 export default UserController;

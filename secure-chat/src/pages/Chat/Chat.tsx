@@ -1,11 +1,9 @@
 import { Flex, Show } from "@chakra-ui/react";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
-import { useSocket } from "../../states/socket/useSocket";
 import { MessageContainer } from "../../components/Message/MessageContainer";
 import { SidebarDrawer } from "../../components/Sidebar/SidebarDrawer";
 
 const ChatPage = () => {
-	useSocket();
 	return (
 		<Flex
 			bg="primary"

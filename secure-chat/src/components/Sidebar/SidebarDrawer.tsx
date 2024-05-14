@@ -8,10 +8,10 @@ import { Sidebar } from "./Sidebar";
 import { useSelectedContact } from "../../states/user/useSelectedUser";
 
 export const SidebarDrawer = () => {
-	const { selectedContact, clear } = useSelectedContact();
+	const { selectedContact, selectedGroup, clear } = useSelectedContact();
 	return (
 		<Drawer
-			isOpen={!selectedContact}
+			isOpen={!(selectedContact || selectedGroup)}
 			onClose={() => clear()}
 			size={"full"}
 			placement="left"

@@ -6,22 +6,31 @@ import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { MessageResponse } from "../../../api/message.types";
 import { useEffect } from "react";
+import { ChatModeType, ChatModes } from "../../chat/useChatMode";
 
 const GET_MESSAGES = "GET_MESSAGES";
-export const useMessagesQuery = () => {
-	const { selectedContact } = useSelectedContact();
-	const { setUserMessages } = useMessages();
+export const useMessagesQuery = (mode: ChatModeType) => {
+	const { selectedContact, selectedGroup } = useSelectedContact();
+	const { setUserMessages, messages } = useMessages();
+	const id =
+		mode === ChatModes.GROUP ? selectedGroup?.id : selectedContact?.id;
 	const query = useQuery({
-		queryKey: [GET_MESSAGES, selectedContact?.id],
+		queryKey: [GET_MESSAGES, mode, id],
 		queryFn: () =>
-			selectedContact ? MessageAPI.getMessages(selectedContact?.id) : [],
+			selectedContact
+				? MessageAPI.getMessages(selectedContact?.id)
+				: selectedGroup
+				? MessageAPI.getGroupMessages(selectedGroup.id)
+				: [],
 	});
 
 	useEffect(() => {
-		if (query.data && selectedContact) {
+		if (query.data && selectedContact && !messages[selectedContact.id]) {
 			setUserMessages(selectedContact?.id, query.data);
+		} else if (query.data && selectedGroup && !messages[selectedGroup.id]) {
+			setUserMessages(selectedGroup.id, query.data);
 		}
-	}, [query.data, selectedContact, setUserMessages]);
+	}, [messages, query.data, selectedContact, selectedGroup, setUserMessages]);
 
 	return query;
 };

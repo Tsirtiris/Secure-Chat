@@ -1,13 +1,14 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { Avatar, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { MessagesList } from "./MessagesList";
 import { useSelectedContact } from "../../states/user/useSelectedUser";
 import { MessageInput } from "./MessageInput";
-import { getAvatarUrl } from "../../utils/avatar";
+import { getAvatarUrl, getGroupAvatarUrl } from "../../utils/avatar";
 import { IoArrowBack } from "react-icons/io5";
 
 export const MessageContainer = () => {
-	const { selectedContact, clear } = useSelectedContact();
-	if (!selectedContact) return <></>;
+	const { selectedContact, selectedGroup, clear } = useSelectedContact();
+	if (!selectedContact && !selectedGroup) return <></>;
 
 	return (
 		<Flex
@@ -31,14 +32,26 @@ export const MessageContainer = () => {
 					<Icon as={IoArrowBack} />
 				</IconButton>
 				<Avatar
-					name={selectedContact.displayName}
-					src={getAvatarUrl(selectedContact.avatar)}
+					name={
+						selectedContact?.displayName ||
+						selectedGroup?.group_name
+					}
+					src={
+						selectedGroup
+							? getGroupAvatarUrl(selectedGroup.group_avatar)
+							: selectedContact &&
+							  getAvatarUrl(selectedContact.avatar)
+					}
 				/>
 				<Flex direction={"column"}>
 					<Text fontSize={"lg"} fontWeight={"bold"}>
-						{selectedContact.displayName}
+						{selectedContact?.displayName ||
+							selectedGroup?.group_name}
 					</Text>
-					<Text>{selectedContact.username}</Text>
+					<Text>
+						{selectedContact?.username ||
+							selectedGroup?.Members.length + " Members"}
+					</Text>
 				</Flex>
 			</Flex>
 			<MessagesList />

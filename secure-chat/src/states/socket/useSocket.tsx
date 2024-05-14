@@ -1,32 +1,11 @@
-import { Socket, io } from "socket.io-client";
-import { BASE_URL } from "../../utils/api";
-import { TOKEN } from "../../utils/token";
-import { create } from "zustand";
 import { useEffect } from "react";
 import { useMessages } from "../query/message/useMessages";
 import { MessageResponse } from "../../api/message.types";
 import { useUser } from "../user/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { GET_CONTACTS } from "../query/contact/useContacts";
-
-type State = {
-	socket: Socket;
-};
-
-type Action = {
-	setSocket: (socket: Socket) => void;
-};
-export const useSocketState = create<State & Action>((set) => ({
-	socket: io(BASE_URL, {
-		autoConnect: false,
-		reconnection: true,
-		auth: {
-			token: window.localStorage.getItem(TOKEN),
-		},
-	}),
-	setSocket: (newSocket: Socket) =>
-		set((state) => ({ ...state, socket: newSocket })),
-}));
+import SocketKeys from "../../api/socket.types";
+import { useSocketState } from "./useSocketState";
 
 export const useSocket = () => {
 	const queryClient = useQueryClient();
@@ -36,8 +15,10 @@ export const useSocket = () => {
 
 	useEffect(() => {
 		if (!socket.connected) {
+			console.log("Connecting", socket.id);
 			socket.connect();
 		}
+
 		if (socket.connected) {
 			socket.on("SEND_MESSAGE_SUCCESS", (req) => {
 				const { message, tempId } = req as {
@@ -49,12 +30,11 @@ export const useSocket = () => {
 						message.sender_id == user?.id
 							? message.receiver_id
 							: message.sender_id;
-					replaceTempWithReal(contactID, tempId, message);
+					replaceTempWithReal(contactID ?? "", tempId, message);
 				}
 			});
 
-			socket.on("RECEIVE_MESSAGE", (req) => {
-				console.log("Received Message");
+			socket.on(SocketKeys.RECEIVE_MESSAGE, (req) => {
 				queryClient.invalidateQueries({
 					queryKey: [GET_CONTACTS],
 				});
@@ -62,9 +42,20 @@ export const useSocket = () => {
 				const { message } = req as { message: MessageResponse };
 				addUserMessage(message.sender_id, message);
 			});
+
+			socket.on(SocketKeys.FRIEND_ONLINE, (req) => {
+				const { userId } = req as { userId: string };
+				console.log("Online - " + userId);
+			});
+
+			socket.on(SocketKeys.FRIEND_OFFLINE, (req) => {
+				const { userId } = req as { userId: string };
+				console.log("Offline - " + userId);
+			});
 		}
 
 		return () => {
+			console.log("DisConnecting", socket.id);
 			socket.disconnect();
 		};
 	}, [addUserMessage, queryClient, replaceTempWithReal, socket, user]);

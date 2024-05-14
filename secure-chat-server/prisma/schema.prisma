@@ -14,18 +14,21 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
   displayName String
-  username    String    @unique
+  username    String            @unique
   password    String
   avatar      String
   pubKey      String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  contacted   Contact[] @relation("contacted")
-  contacts    Contact[] @relation("contact")
-  Sent        Message[] @relation("sent")
-  Received    Message[] @relation("received")
+  isOnline    Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  contacted   Contact[]         @relation("contacted")
+  contacts    Contact[]         @relation("contact")
+  Sent        Message[]         @relation("sent")
+  Received    Message[]         @relation("received")
+  Owner       Group[]           @relation("Owner")
+  Member      GroupMembership[] @relation("member")
 }
 
 model Contact {
@@ -38,16 +41,55 @@ model Contact {
   updatedAt  DateTime @updatedAt
 }
 
+model Group {
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  group_name    String
+  group_avatar  String
+  created_by_id String            @db.ObjectId
+  created_by    User              @relation("Owner", fields: [created_by_id], references: [id])
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  Members       GroupMembership[]
+  Message       Message[]
+}
+
+model GroupMembership {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation("member", fields: [userId], references: [id])
+  groupId   String   @db.ObjectId
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, groupId])
+}
+
 model Message {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  sender_id   String   @db.ObjectId
-  sender      User     @relation("sent", fields: [sender_id], references: [id])
-  receiver_id String   @db.ObjectId
-  receiver    User     @relation("received", fields: [receiver_id], references: [id])
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  sender_id   String        @db.ObjectId
+  sender      User          @relation("sent", fields: [sender_id], references: [id])
+  receiver_id String?       @db.ObjectId
+  receiver    User?         @relation("received", fields: [receiver_id], references: [id])
+  group_id    String?       @db.ObjectId
+  group       Group?        @relation(fields: [group_id], references: [id])
   content     String
   key         String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  scope       Scope         @default(PERSONAL)
+  type        Type          @default(PLAIN)
+  file        FileMetadata?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model FileMetadata {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  originalName String
+  filename     String
+  size         Float
+  mimeType     String
+  message_id   String  @unique @db.ObjectId
+  message      Message @relation(fields: [message_id], references: [id])
 }
 
 enum Scope {

@@ -20,6 +20,7 @@ import { useUser } from "../../states/user/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSelectedContact } from "../../states/user/useSelectedUser";
 import { removeKeys } from "../../utils/key";
+import { socket } from "../../utils/socket";
 
 export const ProfileIcon = () => {
 	const client = useQueryClient();
@@ -34,6 +35,7 @@ export const ProfileIcon = () => {
 		clearUser();
 		clearSelectedContact();
 		removeKeys();
+		socket.disconnect();
 		toast({
 			position: "top",
 			status: "warning",

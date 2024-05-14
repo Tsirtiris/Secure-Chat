@@ -1,7 +1,9 @@
-import { Flex, Avatar, AvatarBadge, Text } from "@chakra-ui/react";
+import { Flex, Avatar, AvatarBadge, Text, HStack } from "@chakra-ui/react";
 import { getAvatarUrl } from "../../utils/avatar";
 import { ContactResponse } from "../../api/contact.types";
 import { useSelectedContact } from "../../states/user/useSelectedUser";
+import BeatLoader from "react-spinners/BeatLoader";
+import { dateFormatter } from "../../config/day.config";
 
 interface UserProps {
 	contact: ContactResponse;
@@ -32,11 +34,16 @@ export const User = ({ contact }: UserProps) => {
 			<Avatar
 				name={contact.displayName}
 				src={getAvatarUrl(avatar)}
-				size={"sm"}
+				size={"md"}
 				border={"2px solid"}
 				borderColor={"black"}
 			>
-				<AvatarBadge boxSize={"1em"} bg="primary" />
+				<AvatarBadge
+					border={"2px solid"}
+					boxSize={"1em"}
+					bg={contact.isOnline ? "primary.400" : "gray.200"}
+					boxShadow={"md"}
+				/>
 			</Avatar>
 			<Flex direction={"column"}>
 				<Text fontWeight={"bold"} fontSize={"sm"}>
@@ -44,6 +51,20 @@ export const User = ({ contact }: UserProps) => {
 				</Text>
 				<Text fontSize={"xs"} color={"gray"}>
 					{username}
+				</Text>
+				<Text fontSize={"xs"} color={"gray.600"} mt="1">
+					{contact.isTyping ? (
+						<HStack color={"primary"} as="span">
+							<BeatLoader size={"6px"} color="#224890" />
+							<Text>Typing...</Text>
+						</HStack>
+					) : contact.isOnline ? (
+						<Text color={"primary"} as="span">
+							online
+						</Text>
+					) : (
+						dateFormatter(contact.updatedAt).fromNow()
+					)}
 				</Text>
 			</Flex>
 		</Flex>
