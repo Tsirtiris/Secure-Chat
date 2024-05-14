@@ -1,4 +1,5 @@
 # Secure Chat
+<img width="1152" alt="chat" src="https://github.com/rakipario/Secure-Chat/assets/92359572/d27be10b-ea69-4aee-b0e1-f066383b5b6e">
 
 ## Functionalities
 - **User Registration and Authentication**
@@ -9,6 +10,7 @@
   - Instant messaging between users with encryption for data security.
 - **Secure sessions**
   - Ensures secure communication and data protection throughout the platform.
+<img width="1152" alt="login" src="https://github.com/rakipario/Secure-Chat/assets/92359572/a5b2f3e8-5a6e-4f85-80cd-a9720a530567">
 
 ## Tech Stack Used
 ### Frontend
@@ -24,6 +26,8 @@
   - Enables real-time communication with the backend through sockets.
 - **Openpgp**
   - Generates private/public keys and encrypts/decrypts data for security.
+
+<img width="1152" alt="chat1" src="https://github.com/rakipario/Secure-Chat/assets/92359572/8a65e0b1-7ba6-49e9-8894-8fe2db171c0c">
 
 ### Backend
 - **Node.js with Express**
