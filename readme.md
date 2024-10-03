@@ -44,3 +44,5 @@
   - NoSQL database for persistent storage.
 - **Prisma**
   - Feature-rich ORM for interacting with the database.
+ 
+  ### Made by Rakip Ario and Alexandros Tsirtiris.
